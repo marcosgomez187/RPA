@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="main-container">
+    <h2 class="d-flex justify-content-center my-3 tituloPrincipal">Servicios disponibles</h2>
+    <div class="accordion" id="accordionExample">
+        {% for servicio in servicios %}
+        <div class="accordion-item">
+            <h2 class="accordion-header" id="heading{{ loop.index }}">
+                <button class="accordion-button {{ 'collapsed' if not loop.first }}" 
+                        type="button" 
+                        data-bs-toggle="collapse" 
+                        data-bs-target="#collapse{{ loop.index }}" 
+                        aria-expanded="{{ 'true' if loop.first else 'false' }}" 
+                        aria-controls="collapse{{ loop.index }}">
+                    {{ servicio }}
+                </button>
+            </h2>
+            <div id="collapse{{ loop.index }}" 
+                 class="accordion-collapse collapse {{ 'show' if loop.first }}" 
+                 aria-labelledby="heading{{ loop.index }}" 
+                 data-bs-parent="#accordionExample">
+                <div class="accordion-body">
+                    <strong>Sistema de descargas de facturación</strong>
+                </div>
+              
+
+                <button 
+                    type="button" 
+                    class="btn btn-primary" 
+                    data-bs-toggle="modal" 
+                    data-bs-target="#scrap_modal" 
+                    onclick="loadModalContent('scrap', '{{ servicio }}', 'modalScrapBody')">
+                    Scrap
+                </button>
+
+                <button 
+                    type="button" 
+                    class="btn btn-secondary" 
+                    data-bs-toggle="modal" 
+                    data-bs-target="#config_manager" 
+                    onclick="loadModalContent('config', '{{ servicio }}', 'modalConfigBody')">
+                    Configuración
+                </button>
+
+             
+            </div>
+        </div>
+        {% endfor %}
+</div>
+
+<!-- Modal Genérico -->
+<div class="modal fade" id="servicioModal" tabindex="-1" aria-labelledby="servicioModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="servicioModalLabel">Cargando...</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" id="modalContent">
+                <!-- El contenido se cargará dinámicamente aquí -->
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/components/index.js') }}"></script>
+<script src="{{ url_for('static', filename='js/components/scrap_manager.js') }}"></script>
+{% endblock %}
