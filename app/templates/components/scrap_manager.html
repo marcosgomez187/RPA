@@ -1,0 +1,15 @@
+<div class="scrap-manager">
+    <p>Procesando facturas para el servicio: <strong>{{ servicio }}</strong></p>
+    <div class="action-container">
+        <button type="button" class="btn btn-primary mt-3" id="btnIniciarScrap">
+            Iniciar descarga
+        </button>
+        <div class="progress mt-3 d-none">
+            <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width: 0%"></div>
+        </div>
+        <ul id="accionesLista" class="mt-3 list-group d-none">
+            <li class="list-group-item">Obteniendo datos del Excel...</li>
+            <li class="list-group-item">Realizando scraping a la página web...</li>
+        </ul>
+    </div>
+</div>

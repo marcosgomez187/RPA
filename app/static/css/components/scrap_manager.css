@@ -1,0 +1,19 @@
+.scrap-manager {
+    padding: 20px;
+}
+
+.action-container {
+    margin-top: 20px;
+}
+
+.progress {
+    height: 20px;
+}
+
+#accionesLista {
+    margin-top: 20px;
+}
+
+.list-group-item {
+    border-left: 4px solid #0d6efd;
+}
