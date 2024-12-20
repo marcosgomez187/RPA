@@ -11,6 +11,12 @@ body {
     color: #495057; /* Color de texto coherente */
 }
 
+main{
+    background-image: url(./media/oficina.jpg);
+    background-size: cover;
+    background-position: center;
+}
+
 /* Login */
 .login-container {
     display: flex;
@@ -145,4 +151,14 @@ main {
     .card h3 {
         font-size: 1.2rem; /* Títulos más pequeños en pantallas pequeñas */
     }
+}
+
+
+.button{
+    height: 10%;
+    width: 15%;
+}
+
+.tituloPrincipal{
+    color:black; 
 }

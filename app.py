@@ -21,8 +21,9 @@ def login():
 # Ruta para la pantalla principal
 @app.route("/main")
 def main():
-    cards = ["Edenor", "Edesur", "Arca"]
-    return render_template("index.html", cards=cards)
+
+    servicios = ["Edenor", "Edesur", "Arca", "Telecom", "Natugry", "Arba", "Municipalidad de Tigre"]
+    return render_template("index.html", servicios=servicios)
 
 if __name__ == "__main__":
     app.run(debug=True)
