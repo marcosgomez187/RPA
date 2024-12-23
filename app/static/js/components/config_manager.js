@@ -1,11 +1,13 @@
 class ConfigManager {
     constructor(servicio) {
+        console.log("constructor config", servicio);
         this.servicio = servicio;
         this.dates = new Set([1]); // Inicialmente el día 1
         this.init();
     }
 
     init() {
+        console.log('Iniciando ConfigManager');
         this.initializeSelects();
         this.setupEventListeners();
         this.loadCurrentConfig();
@@ -45,8 +47,7 @@ class ConfigManager {
 
     async loadCurrentConfig() {
         try {
-            // Aquí podrías cargar la configuración desde el servidor
-            // Por ahora usamos la configuración por defecto
+            console.log('Cargando configuración actual...');
             this.updateDateTable();
         } catch (error) {
             console.error('Error loading config:', error);
@@ -99,22 +100,15 @@ class ConfigManager {
 
     async saveConfig() {
         try {
-            // Aquí implementarías la llamada al servidor para guardar la configuración
+            // Simulación de llamada al servidor
             console.log('Guardando configuración para servicio:', this.servicio);
             console.log('Fechas configuradas:', Array.from(this.dates));
-            
-            // Simular llamada al servidor
+
             await new Promise(resolve => setTimeout(resolve, 500));
-            
-            // Mostrar mensaje de éxito
-            const toast = new bootstrap.Toast(document.createElement('div'));
-            toast.show();
+            alert('Configuración guardada correctamente');
         } catch (error) {
             console.error('Error saving config:', error);
             alert('Error al guardar la configuración');
         }
     }
 }
-
-// Exportar para uso global si es necesario
-window.ConfigManager = ConfigManager;
