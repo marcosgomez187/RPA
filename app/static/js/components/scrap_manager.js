@@ -19,16 +19,21 @@ class ScrapManager {
         try {
             // Deshabilitar botón
             this.btnIniciar.disabled = true;
-            
+           
+             //traer información, del exel, numero de cuenta, servicios, etc... 
+             //esa info, se debe enviar al metodo obtener facturas. 
+
             // Mostrar barra de progreso
             this.progressBar.classList.remove('d-none');
             this.accionesList.classList.remove('d-none');
-            
+
+
             // Simular progreso o realizar la llamada real al backend
             await this.simularProgreso();
             
             // Obtener facturas del backend
-            await this.obtenerFacturas();
+            await this.obtenerFacturas(this.servicio);   //data--informacion del excel--
+        
 
             // Habilitar botón después de completar
             this.btnIniciar.disabled = false;
@@ -51,17 +56,69 @@ class ScrapManager {
 
     async obtenerFacturas() {
         try {
+            //swich para cada servicio con sus fecth a los script.   
+            
+             //llamada al scraper, dependiendo a la entidad que se esta procesando
+            
+             switch(this.servicio){
+                case 'Edenor':
+                   console.log('Ejecutando scraper de Edenor...');
+                   await fetch('/scraperEdenor',{
+                       method: 'POST',
+                       headers:{
+                           'Content-Type': 'application/json'
+                       },
+                       body: JSON.stringify({servicio: 'Edenor'})
+                   })
+                   .then(response =>{
+                       if(!response.ok){
+                           throw new error('error en ejecutar el scraper')
+                       }
+                       return response.json();
+                   })
+                   .then(data =>{
+                       console.log(data.messenger);
+                   })
+                   .catch(error => {
+                       console.error('Error:', error);
+                       alert('Error al ejecutar el scraper');
+                   })
+
+                   break;
+               case 'Edesur':
+                   console.log('Ejecutando scraper de Edesur...');
+                   break;
+               case 'Arca':
+                   console.log('Ejecutando scraper de Arca...');
+                   break;
+               case 'Telecom':
+                   console.log('Ejecutando scraper de Telecom...');
+                   break;
+               case 'Natugry':
+                   console.log('Ejectuando scraper de Natugry...');
+                   break;
+               case 'Arba':
+                   console.log('Ejecutnado scraper de Arba...');
+                   break;
+               case 'Municipalidad de Tigre':
+                   console.log('Ejecutando scraper de Muni de Tigre...');
+                   break
+               default:
+                   alert('El servicio especificado no es valido');
+                   return;
+           }    
+            
             // Mock de facturas para cada servicio
-            const facturasMock = {
-                'Arca': [
-                    { descripcion: 'Factura 1 Arca', fecha_ejecucion: '2024-12-01', estado_ejecucion: 'Completado', factura_id: '123', monto: '$2000' },
-                    { descripcion: 'Factura 2 Arca', fecha_ejecucion: '2024-12-02', estado_ejecucion: 'Pendiente', factura_id: '124', monto: '$3000' }
-                ],
-                'servicioB': [
-                    { descripcion: 'Factura 1 ServicioB', fecha_ejecucion: '2024-12-03', estado_ejecucion: 'Completado', factura_id: '223', monto: '$1500' },
-                    { descripcion: 'Factura 2 ServicioB', fecha_ejecucion: '2024-12-04', estado_ejecucion: 'Pendiente', factura_id: '224', monto: '$1200' }
-                ]
-            };
+            // const facturasMock = {
+            //     'Arca': [
+            //         { descripcion: 'Factura 1 Arca', fecha_ejecucion: '2024-12-01', estado_ejecucion: 'Completado', factura_id: '123', monto: '$2000' },
+            //         { descripcion: 'Factura 2 Arca', fecha_ejecucion: '2024-12-02', estado_ejecucion: 'Pendiente', factura_id: '124', monto: '$3000' }
+            //     ],
+            //     'servicioB': [
+            //         { descripcion: 'Factura 1 ServicioB', fecha_ejecucion: '2024-12-03', estado_ejecucion: 'Completado', factura_id: '223', monto: '$1500' },
+            //         { descripcion: 'Factura 2 ServicioB', fecha_ejecucion: '2024-12-04', estado_ejecucion: 'Pendiente', factura_id: '224', monto: '$1200' }
+            //     ]
+            // };
 
             // Filtrar las facturas según el servicio
             const facturas = facturasMock[this.servicio] || [];
