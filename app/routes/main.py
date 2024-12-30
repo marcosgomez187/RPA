@@ -1,7 +1,7 @@
 from flask import Blueprint, render_template, request, jsonify
 
 
-from app.routes.scraperPages.scraperEdenor import obtenerHtml
+from app.routes.scraperPages.scraperEdenor import inicializarScrap
 
 main_bp = Blueprint('main', __name__)
 
@@ -35,6 +35,8 @@ def get_facturas():
     facturas = obtener_facturas(servicio)  # Función que trae las facturas
     return jsonify(facturas)
 
+
+
 # Nueva ruta para ejecutar el scraper de Edenor
 @main_bp.route('/scraperEdenor', methods=['POST'])
 def scraperEdenor():
@@ -42,7 +44,7 @@ def scraperEdenor():
 
     try:
         if servicio == 'Edenor':
-            obtenerHtml() #llama a la funcion del scraper de Edenor
+            inicializarScrap() #llama a la funcion del scraper de Edenor
             return jsonify({'status': 'success', 'message': 'Scraper de Edenor ejecutandose correctamente'})
         else:
             return jsonify({'status':'error', 'message': f'Servicio {servicio} no soportado'})

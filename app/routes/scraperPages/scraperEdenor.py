@@ -1,86 +1,116 @@
-
-from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-import undetected_chromedriver as uc  # Usa esta librería para evitar detección
-from bs4 import BeautifulSoup
-from time import sleep 
+import undetected_chromedriver as uc
+import logging
 
-import os
+from app.routes.scraperPages.excelReader import ExcelReader
 
-def obtenerHtml():
-    
-    print('este es metodo obtener HTML')
-    url_Edenor= "https://www.edenordigital.com/ingreso"
-    
-    #se configura el servicio y las opciones de navegaciones
+# Configuración de logging
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+
+def inicializarScrap():
+    try:
+        logging.info("Iniciando la lectura del Excel...")
+        datos = obtenerDatosExcel()
+        
+        if datos is not None:  # Verifico que los datos no sean nulos
+            logging.info("Iniciando el proceso de scraping...")
+            ejecutarScraping(datos)
+
+        logging.info("Proceso finalizado con éxito.")
+    except Exception as e:
+        logging.error(f"Error en el proceso de scraping: {e}")
+
+def obtenerDatosExcel():
+    excel_reader = ExcelReader()
+    try:
+        # Armo un diccionario con los nombres y los tipos de las columnas que necesito
+        columnas_y_tipos = {
+            "Razón social": str,
+            "N° Cuenta": str
+        }
+
+        # Nombre de la hoja
+        sheet_name = "MEDIDORES"
+
+        datos = excel_reader.read_excel_to_json("Edenor.xlsx", columns=columnas_y_tipos, sheet_name=sheet_name)
+        logging.info(datos)
+        return datos 
+    except Exception as e:
+        logging.error(f"Error al leer el Excel: {e}")
+        raise
+
+def ejecutarScraping(datos):
+    logging.info("Iniciando el scraper de Edenor...")
+    url_Edenor = "https://www.edenordigital.com/ingreso"
+
     options = uc.ChromeOptions()
-    options.headless = False
-    options.add_argument(r"--user-data-dir=C:\Users\usuario\AppData\Local\Google\Chrome\User Data\Default")
-    options.add_argument("--profile-directory=Default") 
-    options.add_argument('--user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36')
+    options.headless = False  # Ver navegador en tiempo real
+    options.add_argument('--no-sandbox')
+    options.add_argument('--disable-dev-shm-usage')
+    options.add_argument('--start-maximized')  # Maximizar ventana
+    options.add_argument('--disable-blink-features=AutomationControlled')
+    options.add_argument("--disable-save-password-bubble") # Deshabilita la ventana guardar contraseña de google
 
 
-    # options = webdriver.ChromeOptions()
-    # # options.add_argument('--headless')  # Modo sin cabeza
-    # options.add_argument('--no-sandbox')  # Opciones adicionales para optimizar la ejecución en distintos entornos
-   
-    # driver=webdriver.Chrome(options=options)
     driver = uc.Chrome(options=options)
 
     try:
-        driver.get(url_Edenor)   # Navega hasta la página de Edenor
-        sleep(10)    # Pausa para permitir la carga de recursos
-        
-        contenido = driver.page_source  # Obtiene el código HTML
-        html = BeautifulSoup(contenido, "html.parser")
+        logging.info("Accediendo a la URL de Edenor...")
+        driver.get(url_Edenor)
 
-        # formulario= html.find('form', {'class':'styles_form__11_YA'})
-     
-        # print(formulario)  # Imprime el contenido HTML
+        # Esperar explícitamente hasta que el campo de email esté presente
+        wait = WebDriverWait(driver, 100)  # Espera máxima de 20 segundos
+        email_input = wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, "input[type='text']")))
+        password_input = wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, "input[type='password']")))
 
+        # Credenciales EDENOR
+        email = 'proveedores@nordelta.com'
+        password = 'Edenor2018'
+        email_input.send_keys(email)
+        password_input.send_keys(password)
+        logging.info("Credenciales ingresadas.")
 
-        #obtengo los elementos del formulario
-        email_input= driver.find_element(By.CSS_SELECTOR, "input[type='text']")
-    
-        password_input=driver.find_element(By.CSS_SELECTOR, "input[type='password']" )
-
-        #cargo las credenciales
-        email_input.send_keys('casarosa_999@hotmail.com')
-        password_input.send_keys('Cc12345678')
-
-        print("Email ingresado:", email_input.get_attribute("value"))
-        print("Password ingresado:", password_input.get_attribute("value"))
-
-        submit_button = driver.find_element(By.CSS_SELECTOR, "button.MuiButtonBase-root.MuiButton-root")
+        # Click en el botón "Ingresar"
+        submit_button = wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, "button[data-testid='unifiedAuth.submit']")))
         submit_button.click()
+        logging.info("Botón 'Ingresar' presionado. Esperando redirección...")
 
-        sleep(30)
-    
-        #verifico que se haya navegación hacia la pagina del usuario
+        # Verificar la URL después de iniciar sesión
+        wait.until(EC.url_to_be('https://www.edenordigital.com/cuentas'))
+        logging.info("Ingreso exitoso a la página del usuario.")
 
-        usuario_url= driver.current_url
-        print(usuario_url)
-        if(usuario_url == 'https://www.edenordigital.com/usuario'):
-            print('Ingreso a la pagina del usuario')
+        # Esperar explícitamente hasta que el modal esté visible
+        wait = WebDriverWait(driver, 20)  # Espera máxima de 20 segundos
+        modal = wait.until(EC.visibility_of_element_located((By.CSS_SELECTOR, "div.MuiDialog-root.MuiDialog-root")))
+        logging.info("Modal cargado y visible.")
 
-            contenido_html= driver.page_source
+        # Hacer clic en el checkbox "No volver a mostrar"
+        # checkbox = wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, "div.styles_container__nU4V6")))
+        # checkbox.click()
+        # logging.info("Checkbox 'No volver a mostrar' seleccionado.")
 
-            htmlUser= BeautifulSoup(contenido_html, 'html.parser')
+        # Hacer clic en el botón "Entendido"
+        button_entendido = wait.until(EC.element_to_be_clickable((By.XPATH, "//button[span[contains(text(), 'Entendido')]]")))
+        button_entendido.click()
+        logging.info("Botón 'Entendido' presionado.")
 
-            print(htmlUser)
-   
+
+        for cuenta in datos:
+            numero_cuenta = cuenta.get("N° Cuenta")
+            logging.info(f"Procesando cuenta: {numero_cuenta}")
+
+        # # Capturar HTML
+        # contenido_html = driver.page_source
+        # logging.info("Contenido de la página del usuario obtenido.")
+        # print(contenido_html)
+
     except Exception as e:
-        print(f'error al obtener html: {e}')
+        driver.save_screenshot("screenshot.png") # Capturo la pantalla antes que se cierre para identificar donde estuvo el error
+        logging.error(f"Error al obtener HTML: {e}")
     finally:
-        driver.close()
-    
-    
+        driver.quit()
+        logging.info("Driver cerrado.")
 
-
-
-   
-
- 
 
