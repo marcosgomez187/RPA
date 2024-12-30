@@ -87,9 +87,9 @@ def ejecutarScraping(datos):
         logging.info("Modal cargado y visible.")
 
         # Hacer clic en el checkbox "No volver a mostrar"
-        # checkbox = wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, "div.styles_container__nU4V6")))
-        # checkbox.click()
-        # logging.info("Checkbox 'No volver a mostrar' seleccionado.")
+        checkbox = wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, "div.styles_container__nU4V6")))
+        checkbox.click()
+        logging.info("Checkbox 'No volver a mostrar' seleccionado.")
 
         # Hacer clic en el botón "Entendido"
         button_entendido = wait.until(EC.element_to_be_clickable((By.XPATH, "//button[span[contains(text(), 'Entendido')]]")))
