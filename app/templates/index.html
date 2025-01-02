@@ -2,62 +2,85 @@
 
 {% block content %}
 <div class="main-container">
-    <h2 class="d-flex justify-content-center my-3 tituloPrincipal">Servicios disponibles</h2>
-
-    <!-- Seleccionador de servicio -->
-    <select id="serviceSelector" class="form-select" onchange="toggleButtons(this)">
-        <option value="">-- Selecciona un servicio --</option>
-        {% for servicio in servicios %}
-            <option value="{{ servicio }}">{{ servicio }}</option>
-        {% endfor %}
-    </select>
-
-    <!-- Contenedor para los botones que se mostrarán dinámicamente -->
-    <div id="serviceButtons" class="d-flex gap-3 mt-3" style="display: none;">
-        <button 
-            type="button" 
-            class="btn btn-primary" 
-            id="scrapButton" 
-            onclick="loadModalContent('scrap', 'modalScrapBody')">
-            Scrap
-        </button>
-        <button 
-            type="button" 
-            class="btn btn-secondary" 
-            id="configButton" 
-            onclick="loadModalContent('config', 'modalConfigBody')">
-            Configuración
-        </button>
-    </div>
-
-    <!-- Tabla de facturas -->
-    <h3 class="mt-5">Facturas Descargadas</h3>
-    <table id="facturasTable" class="table table-bordered table-striped mt-3">
-        <thead>
-            <tr>
-                <th>Descripción</th>
-                <th>Fecha de Ejecución</th>
-                <th>Estado de Ejecución</th>
-                <th>Factura ID</th>
-                <th>Monto</th>
-                <th>Acciones</th>
-            </tr>
-        </thead>
-        <tbody>
-            <!-- Las filas se agregarán dinámicamente aquí -->
-        </tbody>
-    </table>
-
-    <!-- Botón Enviar (por defecto oculto) -->
-    <div id="enviarBtnContainer" class="mt-3" style="display: none;" >
-        <button 
-        id="btnEnviar" 
-        onclick="loadModalContent('configMail', 'modalEmailBody')"
-        class="btn btn-success">
-            Enviar por mail
-        </button>
-    </div>
     
+    <div class="card mb-4 shadow-sm">
+
+        <div class="card-header bg-white py-3">
+            <h5 class="card-title mb-0">Servicios disponibles</h5>
+        </div>
+        
+        <div class="card-body">
+
+            <div class="d-flex gap-3 align-items-center">
+                <!-- Seleccionador de servicio -->
+                <select id="serviceSelector" class="form-select" onchange="toggleButtons(this)">
+                    <option value=""> -- Seleccionar un servicio -- </option>
+                    {% for servicio in servicios %}
+                        <option value="{{ servicio }}">{{ servicio }}</option>
+                    {% endfor %}
+                </select>
+        
+                <!-- Botones siempre visibles pero deshabilitados por defecto -->
+                <div id="serviceButtons" class="d-flex gap-3">
+                    <button 
+                        type="button" 
+                        class="btn btn-primary d-inline-flex align-items-center gap-2" 
+                        id="scrapButton" 
+                        onclick="loadModalContent('scrap', 'modalScrapBody')"
+                        disabled>
+                        <i class="bi bi-cloud-download"></i>
+                        Scrap
+                    </button>
+                    <button 
+                        type="button" 
+                        class="btn btn-secondary d-inline-flex align-items-center gap-2" 
+                        id="configButton" 
+                        onclick="loadModalContent('config', 'modalConfigBody')"
+                        disabled>
+                        <i class="bi bi-gear"></i>
+                        Configuración
+                    </button>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="card mb-4 shadow-sm">
+
+        <div class="card-header bg-white py-3">
+            <h5 class="card-title mb-0">Facturas Descargadas</h5>
+        </div>
+        
+        <div class="card-body">
+            <table id="facturasTable" class="table table-bordered table-striped mt-3">
+                <thead>
+                    <tr>
+                        <th>Descripción</th>
+                        <th>Fecha de Ejecución</th>
+                        <th>Estado de Ejecución</th>
+                        <th>Factura ID</th>
+                        <th>Monto</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Las filas se agregarán dinámicamente aquí -->
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Botón Enviar (por defecto oculto) -->
+        <div id="enviarBtnContainer" class="mt-3" style="display: none;" >
+            <button 
+            id="btnEnviar" 
+            onclick="loadModalContent('configMail', 'modalEmailBody')"
+            class="btn btn-success">
+                Enviar por mail
+            </button>
+        </div>
+    </div>
 </div>
 
 <!-- Modal Genérico -->
@@ -84,20 +107,29 @@
 <script src="{{ url_for('static', filename='js/components/config_mail.js') }}"></script>
 
 <script>
+    
     function toggleButtons(selectElement) {
-        const serviceButtons = document.getElementById('serviceButtons');
+        const scrapButton = document.getElementById('scrapButton');
+        const configButton = document.getElementById('configButton');
         const selectedService = selectElement.value;
         
         if (selectedService) {
-            // Muestra los botones cuando se selecciona un servicio
-            serviceButtons.style.display = 'flex';
+            // Hablito los botones
+            scrapButton.disabled = false;
+            configButton.disabled = false;
             
-            // Puedes modificar aquí las funciones para cargar los servicios específicos
-            document.getElementById('scrapButton').setAttribute('onclick', `loadModalContent('scrap', '${selectedService}', 'modalScrapBody')`);
-            document.getElementById('configButton').setAttribute('onclick', `loadModalContent('config', '${selectedService}', 'modalConfigBody')`);
+            // Actualizo onclick handlers
+            scrapButton.setAttribute(
+                'onclick', 
+                `loadModalContent('scrap', '${selectedService}', 'modalScrapBody')`
+            );
+            configButton.setAttribute(
+                'onclick', 
+                `loadModalContent('config', '${selectedService}', 'modalConfigBody')`
+            );
         } else {
-            // Oculta los botones si no hay servicio seleccionado
-            serviceButtons.style.display = 'none';
+            scrapButton.disabled = true;
+            configButton.disabled = true;
         }
     }
 </script>

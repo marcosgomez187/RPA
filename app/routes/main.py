@@ -36,7 +36,6 @@ def get_facturas():
     return jsonify(facturas)
 
 
-
 # Nueva ruta para ejecutar el scraper de Edenor
 @main_bp.route('/scraperEdenor', methods=['POST'])
 def scraperEdenor():
