@@ -2,51 +2,85 @@
 
 {% block content %}
 <div class="main-container">
-    <h2 class="d-flex justify-content-center my-3 tituloPrincipal">Servicios disponibles</h2>
-    <div class="accordion" id="accordionExample">
-        {% for servicio in servicios %}
-        <div class="accordion-item">
-            <h2 class="accordion-header" id="heading{{ loop.index }}">
-                <button class="accordion-button {{ 'collapsed' if not loop.first }}" 
-                        type="button" 
-                        data-bs-toggle="collapse" 
-                        data-bs-target="#collapse{{ loop.index }}" 
-                        aria-expanded="{{ 'true' if loop.first else 'false' }}" 
-                        aria-controls="collapse{{ loop.index }}">
-                    {{ servicio }}
-                </button>
-            </h2>
-            <div id="collapse{{ loop.index }}" 
-                 class="accordion-collapse collapse {{ 'show' if loop.first }}" 
-                 aria-labelledby="heading{{ loop.index }}" 
-                 data-bs-parent="#accordionExample">
-                <div class="accordion-body">
-                    <strong>Sistema de descargas de facturación</strong>
-                </div>
-              
+    
+    <div class="card mb-4 shadow-sm">
 
-                <button 
-                    type="button" 
-                    class="btn btn-primary" 
-                    data-bs-toggle="modal" 
-                    data-bs-target="#scrap_modal" 
-                    onclick="loadModalContent('scrap', '{{ servicio }}', 'modalScrapBody')">
-                    Scrap
-                </button>
-
-                <button 
-                    type="button" 
-                    class="btn btn-secondary" 
-                    data-bs-toggle="modal" 
-                    data-bs-target="#config_manager" 
-                    onclick="loadModalContent('config', '{{ servicio }}', 'modalConfigBody')">
-                    Configuración
-                </button>
-
-             
-            </div>
+        <div class="card-header bg-white py-3">
+            <h5 class="card-title mb-0">Servicios disponibles</h5>
         </div>
-        {% endfor %}
+        
+        <div class="card-body">
+
+            <div class="d-flex gap-3 align-items-center">
+                <!-- Seleccionador de servicio -->
+                <select id="serviceSelector" class="form-select" onchange="toggleButtons(this)">
+                    <option value=""> -- Seleccionar un servicio -- </option>
+                    {% for servicio in servicios %}
+                        <option value="{{ servicio }}">{{ servicio }}</option>
+                    {% endfor %}
+                </select>
+        
+                <!-- Botones siempre visibles pero deshabilitados por defecto -->
+                <div id="serviceButtons" class="d-flex gap-3">
+                    <button 
+                        type="button" 
+                        class="btn btn-primary d-inline-flex align-items-center gap-2" 
+                        id="scrapButton" 
+                        onclick="loadModalContent('scrap', 'modalScrapBody')"
+                        disabled>
+                        <i class="bi bi-cloud-download"></i>
+                        Scrap
+                    </button>
+                    <button 
+                        type="button" 
+                        class="btn btn-secondary d-inline-flex align-items-center gap-2" 
+                        id="configButton" 
+                        onclick="loadModalContent('config', 'modalConfigBody')"
+                        disabled>
+                        <i class="bi bi-gear"></i>
+                        Configuración
+                    </button>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="card mb-4 shadow-sm">
+
+        <div class="card-header bg-white py-3">
+            <h5 class="card-title mb-0">Facturas Descargadas</h5>
+        </div>
+        
+        <div class="card-body">
+            <table id="facturasTable" class="table table-bordered table-striped mt-3">
+                <thead>
+                    <tr>
+                        <th>Descripción</th>
+                        <th>Fecha de Ejecución</th>
+                        <th>Estado de Ejecución</th>
+                        <th>Factura ID</th>
+                        <th>Monto</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Las filas se agregarán dinámicamente aquí -->
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Botón Enviar (por defecto oculto) -->
+        <div id="enviarBtnContainer" class="mt-3" style="display: none;" >
+            <button 
+            id="btnEnviar" 
+            onclick="loadModalContent('configMail', 'modalEmailBody')"
+            class="btn btn-success">
+                Enviar por mail
+            </button>
+        </div>
+    </div>
 </div>
 
 <!-- Modal Genérico -->
@@ -63,9 +97,40 @@
         </div>
     </div>
 </div>
+
 {% endblock %}
 
 {% block scripts %}
 <script src="{{ url_for('static', filename='js/components/index.js') }}"></script>
+<script src="{{ url_for('static', filename='js/components/config_manager.js') }}"></script>
 <script src="{{ url_for('static', filename='js/components/scrap_manager.js') }}"></script>
+<script src="{{ url_for('static', filename='js/components/config_mail.js') }}"></script>
+
+<script>
+    
+    function toggleButtons(selectElement) {
+        const scrapButton = document.getElementById('scrapButton');
+        const configButton = document.getElementById('configButton');
+        const selectedService = selectElement.value;
+        
+        if (selectedService) {
+            // Hablito los botones
+            scrapButton.disabled = false;
+            configButton.disabled = false;
+            
+            // Actualizo onclick handlers
+            scrapButton.setAttribute(
+                'onclick', 
+                `loadModalContent('scrap', '${selectedService}', 'modalScrapBody')`
+            );
+            configButton.setAttribute(
+                'onclick', 
+                `loadModalContent('config', '${selectedService}', 'modalConfigBody')`
+            );
+        } else {
+            scrapButton.disabled = true;
+            configButton.disabled = true;
+        }
+    }
+</script>
 {% endblock %}

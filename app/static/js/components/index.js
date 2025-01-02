@@ -19,10 +19,24 @@ class MainPage {
             this.modalContent.innerHTML = html;
             
             // Inicializar componentes específicos según el tipo
-            if (modalType === 'scrap') {
-                new ScrapManager(servicio);
+            switch(modalType) {
+                case 'scrap':
+                    this.modalTitle.textContent = `Scraping - ${servicio}`;
+                    new ScrapManager(servicio);
+                    break;
+                case 'config':
+                    this.modalTitle.textContent = `Configuración - ${servicio}`;
+                    new ConfigManager(servicio);
+                    break;
+                case 'configMail':
+                    this.modalTitle.textContent = `Envío de Mail`;
+                    new ConfigMail(servicio);
+                    break;
+                default:
+                    console.log('Tipo de modal no reconocido');
+                    break;
             }
-            
+                        
             // Mostrar modal
             this.modal.show();
         } catch (error) {
