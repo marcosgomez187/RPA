@@ -1,7 +1,10 @@
 from flask import Blueprint, render_template, request, jsonify
 
-
 from app.routes.scraperPages.scraperEdenor import inicializarScrap
+from app.routes.scraperPages.scraperNatugry import obtenerPages
+from app.routes.scraperPages.telecom.scraperTelecom import scrapTelecom
+from app.routes.scraperPages.scraperMuniTigre import scrapMuniTigre
+
 
 main_bp = Blueprint('main', __name__)
 
@@ -45,6 +48,49 @@ def scraperEdenor():
         if servicio == 'Edenor':
             inicializarScrap() #llama a la funcion del scraper de Edenor
             return jsonify({'status': 'success', 'message': 'Scraper de Edenor ejecutandose correctamente'})
+        else:
+            return jsonify({'status':'error', 'message': f'Servicio {servicio} no soportado'})
+    except Exception as e:
+        return jsonify({'status':'error', 'message': str(e)}),500
+
+# Nueva ruta para ejecutar el scraper de Natugry
+@main_bp.route('/scraperNatugry', methods=['POST'])
+def scraperNatugry():
+    servicio= request.json.get('servicio') # El servicio debe ser enviado en el cuerpo de la solicitud
+
+    try:
+        if servicio == 'Natugry':
+            obtenerPages() #llama a la funcion del scraper de Edenor
+            return jsonify({'status': 'success', 'message': 'Scraper de Edenor ejecutandose correctamente'})
+        else:
+            return jsonify({'status':'error', 'message': f'Servicio {servicio} no soportado'})
+    except Exception as e:
+        return jsonify({'status':'error', 'message': str(e)}),500
+    
+
+# Nueva ruta para ejecutar el scraper de Telecom
+@main_bp.route('/scraperTelecom', methods=['POST'])
+def scraperTelecom():
+    servicio= request.json.get('servicio') # El servicio debe ser enviado en el cuerpo de la solicitud
+
+    try:
+        if servicio == 'Telecom':
+            scrapTelecom() #llama a la funcion del scraper de Telecom
+            return jsonify({'status': 'success', 'message': 'Scraper de Telecom ejecutandose correctamente'})
+        else:
+            return jsonify({'status':'error', 'message': f'Servicio {servicio} no soportado'})
+    except Exception as e:
+        return jsonify({'status':'error', 'message': str(e)}),500
+    
+    # Nueva ruta para ejecutar el scraper de Municipalida de Tigre
+@main_bp.route('/scraperMunicipalidad', methods=['POST'])
+def scraperMunicipalidad():
+    servicio= request.json.get('servicio') # El servicio debe ser enviado en el cuerpo de la solicitud
+
+    try:
+        if servicio == 'Municipalidad de Tigre':
+            scrapMuniTigre() #llama a la funcion del scraper de Telecom
+            return jsonify({'status': 'success', 'message': 'Scraper de Municipalidad ejecutandose correctamente'})
         else:
             return jsonify({'status':'error', 'message': f'Servicio {servicio} no soportado'})
     except Exception as e:

@@ -1,0 +1,30 @@
+Descarga de facturas telecom:
+
+CONSULTATION:
+
+LINEAS MOVILES:
+
+    se descargan con numero de "ACUERDO" siempre la ultima factura
+    guardado: Consultation S.A -Puertos Lineas Moviles - Nombre del documento
+
+OTROS PRODUCTOS EMPRESAS:
+
+    Descarga: con  numero de cliente UNICO y el numero de ACUERDO, se descargan todos los comprabantes del mes
+    Guardado: Nro de factura - consultation puerto - otros producto empresa - numero de acuerdo - metodo de pago
+
+LINEAS FIJAS:
+
+    Descarga: con el numero de cliente y numero de acuerdo, se descarga la factura del ultimo mes
+    Guardado: Nro de factura sin la A
+
+------------------------------------------------------------------------------------------------------------------------------------------    
+
+REDES:
+    MISMO MODO DE DESCARGA Y GURADADO QUE CONSULTATION
+
+
+IMPORTANTE: 
+    LA PAGINA MUESTRA EN ALGUNOS CASOS NO MUESTRA LAS SOLAPAS PARA ACCEDER AL SERVICIO. EL SCRAP DEBE MOSTRAR EN CASO DE ERROR
+    CUAL ES, Y QUE FACTURAS NO SE PUDIERON DESCARGAR
+
+    

@@ -92,16 +92,76 @@ class ScrapManager {
                    console.log('Ejecutando scraper de Arca...');
                    break;
                case 'Telecom':
-                   console.log('Ejecutando scraper de Telecom...');
+                console.log('Ejecutando scraper de Telecom...');
+                await fetch('/scraperTelecom',{
+                    method: 'POST',
+                    headers:{
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({servicio: 'Telecom'})
+                })
+                .then(response =>{
+                    if(!response.ok){
+                        throw new error('error en ejecutar el scraper')
+                    }
+                    return response.json();
+                })
+                .then(data =>{
+                    console.log(data.messenger);
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Error al ejecutar el scraper');
+                })
                    break;
                case 'Natugry':
-                   console.log('Ejectuando scraper de Natugry...');
+                await fetch('/scraperNatugry',{
+                    method: 'POST',
+                    headers:{
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({servicio: 'Natugry'})
+                })
+                .then(response =>{
+                    if(!response.ok){
+                        throw new error('error en ejecutar el scraper')
+                    }
+                    return response.json();
+                })
+                .then(data =>{
+                    console.log(data.messenger);
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Error al ejecutar el scraper');
+                })
                    break;
                case 'Arba':
                    console.log('Ejecutnado scraper de Arba...');
                    break;
                case 'Municipalidad de Tigre':
-                   console.log('Ejecutando scraper de Muni de Tigre...');
+                console.log('Ejecutando scraper de Municipalidad...');
+                await fetch('/scraperMunicipalidad',{
+                    method: 'POST',
+                    headers:{
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({servicio: 'Municipalidad de Tigre'})
+                })
+                .then(response =>{
+                    if(!response.ok){
+                        throw new error('error en ejecutar el scraper')
+                    }
+                    return response.json();
+                })
+                .then(data =>{
+                    console.log(data.messenger);
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Error al ejecutar el scraper');
+                })
+
                    break
                default:
                    alert('El servicio especificado no es valido');
